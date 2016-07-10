@@ -16,12 +16,15 @@ final class StatusCode {
     
     init?(_ element: XMLElement) {
         guard element.tagName == "h3" else { return nil }
-        let components = element.text!.componentsSeparatedByString(" ")
+        let components = Array(
+            element.text!.componentsSeparatedByString(" ").map { $0.componentsSeparatedByString("-") }.flatten()
+        )
         guard let code = Int(components[1]) else { return nil }
         let name = (components[2..<components.count]).enumerate().map { index, value in
             if index == 0 { return value.lowercaseString }
             return value
         }.joinWithSeparator("")
+        guard name != "(unused)" else { return nil }
         self.code = code
         self.name = name
         self.desc = ""
